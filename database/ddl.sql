@@ -7,7 +7,7 @@ CREATE TABLE parties (
     description TEXT NOT NULL,
     dateOfEstablishment TEXT NOT NULL,
     logo TEXT NOT NULL,
-    createdDate TEXT NOT NULL,
+    createdDate TEXT NOT NULL
 );
 
 CREATE TABLE candidates (

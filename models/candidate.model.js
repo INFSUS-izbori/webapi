@@ -31,7 +31,6 @@ class Candidate {
         this.createdDate = createdDate;
     }
 
-    // Validate OIB source: https://damjantomsic.from.hr/croatian-oib-personal-identification-number-generator/
     validateOIB(oib) {
         if (oib.length !== 11) {
             throw new Error('OIB must be 11 digits long.');

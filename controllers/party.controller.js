@@ -3,14 +3,13 @@ const db = new sqlite3.Database('./database/database.db');
 const { v4: uuidv4 } = require('uuid');
 const Party = require('../models/party.model');
 
-// Create a new party
 exports.create = (req, res) => {
     const { name, description, dateOfEstablishment, logo } = req.body;
     const id = uuidv4();
     const createdDate = new Date().toISOString();
 
     try {
-        new Party(id, name, description, dateOfEstablishment, logo, createdDate); // Validate the data
+        new Party(id, name, description, dateOfEstablishment, logo, createdDate);
     } catch (error) {
         return res.status(400).send({ message: error.message });
     }
@@ -29,7 +28,6 @@ exports.create = (req, res) => {
         });
 };
 
-// Get all parties
 exports.findAll = (req, res) => {
     db.all('SELECT * FROM parties', (err, rows) => {
         if (err) {
@@ -39,7 +37,6 @@ exports.findAll = (req, res) => {
     });
 };
 
-// Get a single party by id
 exports.findOne = (req, res) => {
     db.get('SELECT * FROM parties WHERE id = ?', req.params.id, (err, row) => {
         if (err) {
@@ -52,13 +49,12 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Update a party by id
 exports.update = (req, res) => {
     const { name, description, dateOfEstablishment, logo } = req.body;
     const id = req.params.id;
 
     try {
-        new Party(id, name, description, dateOfEstablishment, logo, new Date().toISOString()); // Validate the data
+        new Party(id, name, description, dateOfEstablishment, logo, new Date().toISOString());
     } catch (error) {
         return res.status(400).send({ message: error.message });
     }
@@ -80,12 +76,19 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a party by id
 exports.delete = (req, res) => {
-    db.run('DELETE FROM parties WHERE id = ?', req.params.id, function (err) {
+    const partyId = req.params.id;
+
+    db.run('UPDATE candidates SET partyId = null WHERE partyId = ?', partyId, function (err) {
         if (err) {
             return res.status(500).send({ message: err.message });
         }
-        res.status(200).send({ message: 'Party deleted' });
+
+        db.run('DELETE FROM parties WHERE id = ?', partyId, function (err) {
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            res.status(200).send({ message: 'Party deleted and associated candidates updated.' });
+        });
     });
 };

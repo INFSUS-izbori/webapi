@@ -3,14 +3,13 @@ const db = new sqlite3.Database('./database/database.db');
 const { v4: uuidv4 } = require('uuid');
 const Candidate = require('../models/candidate.model');
 
-// Create a new candidate
 exports.create = (req, res) => {
     const { oib, name, image, description, partyId } = req.body;
     const id = uuidv4();
     const createdDate = new Date().toISOString();
 
     try {
-        new Candidate(id, oib, name, image, description, partyId, createdDate); // Validate the data
+        new Candidate(id, oib, name, image, description, partyId, createdDate);
     } catch (error) {
         return res.status(400).send({ message: error.message });
     }
@@ -29,7 +28,6 @@ exports.create = (req, res) => {
         });
 };
 
-// Get all candidates
 exports.findAll = (req, res) => {
     db.all('SELECT * FROM candidates', (err, rows) => {
         if (err) {
@@ -39,7 +37,6 @@ exports.findAll = (req, res) => {
     });
 };
 
-// Get a single candidate by id
 exports.findOne = (req, res) => {
     db.get('SELECT * FROM candidates WHERE id = ?', req.params.id, (err, row) => {
         if (err) {
@@ -52,13 +49,12 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Update a candidate by id
 exports.update = (req, res) => {
     const { oib, name, image, description, partyId } = req.body;
      const id = req.params.id;
 
     try {
-        new Candidate(id, oib, name, image, description, partyId, new Date().toISOString()); // Validate the data
+        new Candidate(id, oib, name, image, description, partyId, new Date().toISOString());
     } catch (error) {
         return res.status(400).send({ message: error.message });
     }
@@ -79,7 +75,6 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a candidate by id
 exports.delete = (req, res) => {
     db.run('DELETE FROM candidates WHERE id = ?', req.params.id, function (err) {
         if (err) {
