@@ -1,15 +1,18 @@
-const express = require('express');
-const router = express.Router();
-const partyController = require('../controllers/party.controller');
+const express = require("express")
+const partyController = require("../controllers/party.controller")
 
-router.post('/parties', partyController.create);
+module.exports = (db) => {
+    const router = express.Router()
 
-router.get('/parties', partyController.findAll);
+    router.post("/parties", (req, res) => partyController.create(req, res, db))
 
-router.get('/parties/:id', partyController.findOne);
+    router.get("/parties", (req, res) => partyController.findAll(req, res, db))
 
-router.put('/parties/:id', partyController.update);
+    router.get("/parties/:id", (req, res) => partyController.findOne(req, res, db))
 
-router.delete('/parties/:id', partyController.delete);
+    router.put("/parties/:id", (req, res) => partyController.update(req, res, db))
 
-module.exports = router;
+    router.delete("/parties/:id", (req, res) => partyController.delete(req, res, db))
+
+    return router
+}
