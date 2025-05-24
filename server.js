@@ -4,10 +4,12 @@ const partyRoutesFn = require("./routes/party.routes")
 const candidateRoutesFn = require("./routes/candidate.routes")
 const sqlite3 = require("sqlite3").verbose()
 const fs = require("fs")
+const cors = require("cors") // Import cors
 
 const app = express()
 const port = 3000
 
+app.use(cors()) // Enable CORS for all routes
 app.use(bodyParser.json())
 
 const db = new sqlite3.Database("./database/database.db", (err) => {
