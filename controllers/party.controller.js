@@ -83,16 +83,26 @@ exports.update = (req, res, db) => {
 exports.delete = (req, res, db) => {
     const partyId = req.params.id
 
-    db.run("UPDATE candidates SET partyId = null WHERE partyId = ?", partyId, function (err) {
+    // First, chck if the party exists
+    db.get("SELECT * FROM parties WHERE id = ?", partyId, (err, row) => {
         if (err) {
             return res.status(500).send({ message: err.message })
         }
+        if (!row) {
+            return res.status(404).send({ message: "Party not found" })
+        } else {
+            db.run("UPDATE candidates SET partyId = null WHERE partyId = ?", partyId, function (err) {
+                if (err) {
+                    return res.status(500).send({ message: err.message })
+                }
 
-        db.run("DELETE FROM parties WHERE id = ?", partyId, function (err) {
-            if (err) {
-                return res.status(500).send({ message: err.message })
-            }
-            res.status(200).send({ message: "Party deleted and associated candidates updated." })
-        })
+                db.run("DELETE FROM parties WHERE id = ?", partyId, function (err) {
+                    if (err) {
+                        return res.status(500).send({ message: err.message })
+                    }
+                    res.status(200).send({ message: "Party deleted and associated candidates updated." })
+                })
+            })
+        }
     })
 }

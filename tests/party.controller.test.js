@@ -120,6 +120,33 @@ describe("Party API", () => {
         expect(fetchCandidateRes.body.partyId).toBeNull()
     })
 
+    it("should fail to create a party with missing name", async () => {
+        const { name, ...partyDataWithoutName } = newParty
+        const res = await request(app).post("/api/parties").send(partyDataWithoutName)
+        expect(res.statusCode).toEqual(400)
+        expect(res.body.message).toBe("Name is required")
+    })
+
+    it("should fail to create a party with name as only whitespace", async () => {
+        const partyDataWithWhitespaceName = { ...newParty, name: "   " }
+        const res = await request(app).post("/api/parties").send(partyDataWithWhitespaceName)
+        expect(res.statusCode).toEqual(400)
+        expect(res.body.message).toBe("Name cannot be empty or just whitespace")
+    })
+
+    it("should fail to update a non-existent party", async () => {
+        const nonExistentPartyId = "uuid-that-does-not-exist"
+        const updatedData = { ...newParty, name: "Updated Non Existent Party" }
+        const res = await request(app).put(`/api/parties/${nonExistentPartyId}`).send(updatedData)
+        expect(res.statusCode).toEqual(404)
+    })
+
+    it("should fail to delete a non-existent party", async () => {
+        const nonExistentPartyId = "uuid-that-does-not-exist"
+        const res = await request(app).delete(`/api/parties/${nonExistentPartyId}`)
+        expect(res.statusCode).toEqual(404) // Or based on how your API handles this
+    })
+
     // Helper function for OIB generation (if not already in a shared utility)
     const generateValidOIB = () => {
         let oib = ""

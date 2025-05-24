@@ -80,9 +80,11 @@ describe("Candidate API", () => {
 
         const candidateData = { ...newCandidate, name: "Duplicate OIB Candidate", partyId: global.testPartyId, oib: candidateOIB } // Use same OIB
         const res = await request(app).post("/api/candidates").send(candidateData)
-        expect(res.statusCode).toEqual(201) 
-        
-        const duplicateRes = await request(app).post("/api/candidates").send({ ...candidateData, name: "Another Candidate with Same OIB" })
+        expect(res.statusCode).toEqual(201)
+
+        const duplicateRes = await request(app)
+            .post("/api/candidates")
+            .send({ ...candidateData, name: "Another Candidate with Same OIB" })
         expect(duplicateRes.statusCode).toEqual(500)
         expect(duplicateRes.body.message).toBe("SQLITE_CONSTRAINT: UNIQUE constraint failed: candidates.oib")
         // Clean up the created candidate
