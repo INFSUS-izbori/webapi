@@ -3,12 +3,12 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const partyRoutes = require("../routes/party.routes")
 const candidateRoutes = require("../routes/candidate.routes")
-const { db: testDb } = require("./setupTests") // Import the in-memory db
+const { db: testDb } = require("./setupTests")
 
 const app = express()
 app.use(bodyParser.json())
-app.use("/api", partyRoutes(testDb)) // Pass the testDb to the route initializer
-app.use("/api", candidateRoutes(testDb)) // Pass the testDb to the route initializer
+app.use("/api", partyRoutes(testDb))
+app.use("/api", candidateRoutes(testDb))
 
 describe("Party API", () => {
     const newParty = {
@@ -31,7 +31,6 @@ describe("Party API", () => {
     })
 
     it("should get all parties, ensuring global party and newly created party exist", async () => {
-        // Create another party to ensure multiple parties are returned
         const anotherParty = { ...newParty, name: "Test Party Beta", logo: "logo_beta.png" }
         const createRes = await request(app).post("/api/parties").send(anotherParty)
         expect(createRes.statusCode).toEqual(201)
@@ -51,8 +50,6 @@ describe("Party API", () => {
         const res = await request(app).get(`/api/parties/${global.testPartyId}`)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty("id", global.testPartyId)
-        // Check against globalPartyData defined in setupTests.js if needed
-        // expect(res.body.name).toBe(globalPartyData.name);
     })
 
     it("should update an existing party and verify update", async () => {
@@ -92,16 +89,14 @@ describe("Party API", () => {
     })
 
     it("should delete a party and ensure associated candidates have their partyId nulled", async () => {
-        // 1. Create a new party
         const customParty = { ...newParty, name: "Party With Candidates" }
         const partyRes = await request(app).post("/api/parties").send(customParty)
         expect(partyRes.statusCode).toEqual(201)
         const customPartyId = partyRes.body.id
 
-        // 2. Create a candidate associated with this party
         const candidateData = {
             name: "Test Candidate Gamma",
-            oib: generateValidOIB(), // Make sure to have generateValidOIB available or define one
+            oib: generateValidOIB(),
             image: "candidate_gamma.jpg",
             description: "A candidate for the custom party",
             partyId: customPartyId,
@@ -110,11 +105,9 @@ describe("Party API", () => {
         expect(candidateRes.statusCode).toEqual(201)
         const candidateId = candidateRes.body.id
 
-        // 3. Delete the party
         const deletePartyRes = await request(app).delete(`/api/parties/${customPartyId}`)
         expect(deletePartyRes.statusCode).toEqual(200)
 
-        // 4. Fetch the candidate and verify partyId is null
         const fetchCandidateRes = await request(app).get(`/api/candidates/${candidateId}`)
         expect(fetchCandidateRes.statusCode).toEqual(200)
         expect(fetchCandidateRes.body.partyId).toBeNull()
@@ -144,10 +137,9 @@ describe("Party API", () => {
     it("should fail to delete a non-existent party", async () => {
         const nonExistentPartyId = "uuid-that-does-not-exist"
         const res = await request(app).delete(`/api/parties/${nonExistentPartyId}`)
-        expect(res.statusCode).toEqual(404) // Or based on how your API handles this
+        expect(res.statusCode).toEqual(404)
     })
 
-    // Helper function for OIB generation (if not already in a shared utility)
     const generateValidOIB = () => {
         let oib = ""
         for (let i = 0; i < 10; i++) {

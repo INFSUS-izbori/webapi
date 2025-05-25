@@ -83,7 +83,6 @@ exports.update = (req, res, db) => {
 exports.delete = (req, res, db) => {
     const partyId = req.params.id
 
-    // First, chck if the party exists
     db.get("SELECT * FROM parties WHERE id = ?", partyId, (err, row) => {
         if (err) {
             return res.status(500).send({ message: err.message })

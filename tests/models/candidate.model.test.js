@@ -1,6 +1,5 @@
 const Candidate = require("../../models/candidate.model")
 
-// Helper to generate a valid OIB for testing
 const generateValidOIB = () => {
     let oib = ""
     for (let i = 0; i < 10; i++) {
@@ -65,7 +64,6 @@ describe("Candidate Model", () => {
         expect(() => new Candidate(...Object.values(data))).toThrow("CreatedDate is required")
     })
 
-    // PartyId can be null/undefined if the candidate is independent
     it("should allow partyId to be null", () => {
         const data = { ...validData, partyId: null }
         const candidate = new Candidate(...Object.values(data))
@@ -110,7 +108,6 @@ describe("Candidate Model", () => {
         })
 
         it("should throw an error for an invalid OIB control number", () => {
-            // This OIB is 11 digits, all numbers, but the control digit is incorrect.
             expect(
                 () =>
                     new Candidate(
@@ -155,8 +152,8 @@ describe("Candidate Model", () => {
         })
 
         it("should throw an error if OIB is only whitespace", () => {
-            const data = { ...validData, oib: "           " } // 11 spaces
-            expect(() => new Candidate(...Object.values(data))).toThrow("OIB must be 11 digits long.") // Or "OIB must contain only digits." depending on trim order
+            const data = { ...validData, oib: "           " }
+            expect(() => new Candidate(...Object.values(data))).toThrow("OIB must be 11 digits long.")
         })
     })
 

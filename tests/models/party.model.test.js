@@ -76,12 +76,8 @@ describe("Party Model", () => {
 
     it("should throw an error if dateOfEstablishment is an invalid date format", () => {
         const data = { ...validData, dateOfEstablishment: "not-a-date" }
-        // Assuming your model or controller would eventually try to parse this or it fails a format check
-        // For now, the model constructor doesn't validate the date format itself, only its presence.
-        // This test might be more relevant at the controller or service layer if date parsing occurs there.
-        // If the Party model itself should validate the date format, add that logic to the model first.
-        const party = new Party(...Object.values(data)) // No error thrown by current constructor
-        expect(party.dateOfEstablishment).toBe("not-a-date") // Current behavior
+        const party = new Party(...Object.values(data))
+        expect(party.dateOfEstablishment).toBe("not-a-date")
     })
 
     it("should throw an error if logo is an empty string", () => {

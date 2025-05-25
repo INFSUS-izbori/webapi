@@ -36,9 +36,9 @@ class Candidate {
         this.id = id
         this.oib = trimmedOib
         this.name = trimmedName
-        this.image = image // Assuming image can be optional or validated differently
+        this.image = Image
         this.description = trimmedDescription
-        this.partyId = partyId // Assuming partyId can be optional
+        this.partyId = partyId
         this.createdDate = createdDate
     }
 

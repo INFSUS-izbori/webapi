@@ -3,16 +3,14 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const candidateRoutesFn = require("../routes/candidate.routes")
 const partyRoutesFn = require("../routes/party.routes")
-const { db } = require("./setupTests") // Import the shared in-memory db
+const { db } = require("./setupTests")
 const e = require("express")
 
 const app = express()
 app.use(bodyParser.json())
-// Pass the db instance to the route handlers
 app.use("/api", candidateRoutesFn(db))
 app.use("/api", partyRoutesFn(db))
 
-// Helper to generate a valid OIB for testing
 const generateValidOIB = () => {
     let oib = ""
     for (let i = 0; i < 10; i++) {
@@ -43,7 +41,6 @@ describe("Candidate API", () => {
 
     beforeEach(async () => {
         const candidateOIB = generateValidOIB()
-        // Create a candidate for testing
         const candidateData = { ...newCandidate, partyId: global.testPartyId, oib: candidateOIB }
         const res = await request(app).post("/api/candidates").send(candidateData)
         expect(res.statusCode).toEqual(201)
@@ -63,13 +60,12 @@ describe("Candidate API", () => {
         expect(res.body.name).toBe(candidateData.name)
         expect(res.body.oib).toBe(candidateData.oib)
 
-        // Remove the created candidate ID for cleanup
         const deleteRes = await request(app).delete(`/api/candidates/${res.body.id}`)
         expect(deleteRes.statusCode).toEqual(200)
     })
 
     it("should fail to create a candidate with an invalid OIB", async () => {
-        const candidateData = { ...newCandidate, partyId: global.testPartyId, oib: "12345678900" } // Clearly invalid OIB
+        const candidateData = { ...newCandidate, partyId: global.testPartyId, oib: "12345678900" }
         const res = await request(app).post("/api/candidates").send(candidateData)
         expect(res.statusCode).toEqual(400)
         expect(res.body.message).toBe("OIB is not valid.")
@@ -87,7 +83,6 @@ describe("Candidate API", () => {
             .send({ ...candidateData, name: "Another Candidate with Same OIB" })
         expect(duplicateRes.statusCode).toEqual(500)
         expect(duplicateRes.body.message).toBe("SQLITE_CONSTRAINT: UNIQUE constraint failed: candidates.oib")
-        // Clean up the created candidate
 
         const deleteRes = await request(app).delete(`/api/candidates/${res.body.id}`)
         expect(deleteRes.statusCode).toEqual(200)
@@ -117,7 +112,7 @@ describe("Candidate API", () => {
     it("should update an existing candidate", async () => {
         expect(createdCandidateId).toBeDefined()
         const updatedData = {
-            oib: generateValidOIB(), // New valid OIB
+            oib: generateValidOIB(),
             name: "Updated Test Candidate Beta",
             image: "updated_candidate_beta.jpg",
             description: "Updated description for Beta",
