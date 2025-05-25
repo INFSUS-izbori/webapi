@@ -68,7 +68,7 @@ The application uses SQLite for its database.
 | `name`                | `TEXT` | `NOT NULL`, `UNIQUE` | Name of the party                         |
 | `description`         | `TEXT` | `NOT NULL`           | Description of the party                  |
 | `dateOfEstablishment` | `TEXT` | `NOT NULL`           | Date when the party was established (ISO) |
-| `logo`                | `TEXT` | `NOT NULL`           | Base64 encoded string or URL for the logo |
+| `logo`                | `TEXT` | `NOT NULL`           | Base64 encoded string                     |
 | `createdDate`         | `TEXT` | `NOT NULL`           | Date when the record was created (ISO)    |
 
 **Table: `candidates`**
@@ -78,7 +78,7 @@ The application uses SQLite for its database.
 | `id`          | `TEXT` | `PRIMARY KEY`                                  | Unique identifier for the candidate (UUID)          |
 | `oib`         | `TEXT` | `NOT NULL`, `UNIQUE`                           | Croatian Personal Identification Number (OIB)       |
 | `name`        | `TEXT` | `NOT NULL`                                     | Name of the candidate                               |
-| `image`       | `TEXT` |                                                | Base64 encoded string or URL for the image          |
+| `image`       | `TEXT` |                                                | Base64 encoded string                               |
 | `description` | `TEXT` | `NOT NULL`                                     | Description of the candidate                        |
 | `partyId`     | `TEXT` | `FOREIGN KEY (partyId) REFERENCES parties(id)` | ID of the party the candidate belongs to (nullable) |
 | `createdDate` | `TEXT` | `NOT NULL`                                     | Date when the record was created (ISO)              |
@@ -102,7 +102,7 @@ Base path: `/api/parties`
             "name": "string (required, unique)",
             "description": "string (required)",
             "dateOfEstablishment": "string (ISO date, required)",
-            "logo": "string (base64 or URL, required)"
+            "logo": "string (base64, required)"
         }
         ```
     -   Success Response (201):
@@ -174,7 +174,7 @@ Base path: `/api/candidates`
         {
             "oib": "string (required, unique, 11 digits, valid OIB)",
             "name": "string (required)",
-            "image": "string (optional, base64 or URL)",
+            "image": "string (optional, base64)",
             "description": "string (required)",
             "partyId": "uuid (optional, references party ID)"
         }
