@@ -36,7 +36,7 @@ class Candidate {
         this.id = id
         this.oib = trimmedOib
         this.name = trimmedName
-        this.image = Image
+        this.image = image
         this.description = trimmedDescription
         this.partyId = partyId
         this.createdDate = createdDate
